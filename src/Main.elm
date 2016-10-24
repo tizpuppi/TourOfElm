@@ -2,6 +2,7 @@ module Main exposing (..)
 
 import Html exposing (Html, div, h1, h2, label, input, text)
 import Html.Attributes exposing (placeholder, value)
+import Html.Events exposing (onInput)
 import Html.App as App
 
 
@@ -41,12 +42,21 @@ model =
 
 
 type Msg
-    = NoOp
+    = Change String
 
 
 update : Msg -> Model -> Model
 update msg model =
-    model
+    case msg of
+        Change newName ->
+            let
+                oldHero =
+                    model.hero
+
+                newHero =
+                    { oldHero | name = newName }
+            in
+                { model | hero = newHero }
 
 
 
@@ -63,6 +73,6 @@ view model =
             ]
         , div []
             [ label [] [ text "name: " ]
-            , input [ value model.hero.name, placeholder "name" ] []
+            , input [ value model.hero.name, placeholder "name", onInput Change ] []
             ]
         ]
