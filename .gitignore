@@ -2,3 +2,9 @@
 elm-stuff/
 # elm-repl generated files
 repl-temp-*
+# Webstorm folder
+.idea
+# editorconfig setup
+.editorconfig
+node_modules
+assets
