@@ -4,12 +4,11 @@ import Html exposing (Html, body, div, span, h1, h2, ul, li, label, input, text)
 import Html.Attributes exposing (placeholder, value, class)
 import Html.Events exposing (onInput, onClick)
 import Html.App as App
-import Maybe exposing (withDefault)
 
 
 main : Program Never
 main =
-    App.beginnerProgram { model = model, view = view, update = update }
+    App.beginnerProgram { model = initialModel, view = view, update = update }
 
 
 type alias AppConfig =
@@ -48,8 +47,8 @@ type alias Model =
     { selectedHeroId : Maybe Int, heroes : List Hero }
 
 
-model : Model
-model =
+initialModel : Model
+initialModel =
     { selectedHeroId = Nothing, heroes = heroes }
 
 
@@ -73,7 +72,7 @@ update msg model =
                 Just i ->
                     let
                         h =
-                            getHero (Just i) model.heroes
+                            getHero i model.heroes
                     in
                         { model | heroes = (replaceHero i (Hero h.id newName) model.heroes) }
 
@@ -98,22 +97,17 @@ replaceHero i h hs =
                 x :: (replaceHero i h xs)
 
 
-getHero : Maybe Int -> List Hero -> Hero
+getHero : Int -> List Hero -> Hero
 getHero i heroes =
-    case i of
-        Nothing ->
+    case heroes of
+        [] ->
             Hero -1 ""
 
-        Just i ->
-            case heroes of
-                [] ->
-                    Hero -1 ""
-
-                x :: xs ->
-                    if x.id == i then
-                        x
-                    else
-                        getHero (Just i) xs
+        x :: xs ->
+            if x.id == i then
+                x
+            else
+                getHero i xs
 
 
 isHeroSelected : Maybe Int -> Hero -> Bool
@@ -133,44 +127,53 @@ isHeroSelected index h =
 -- VIEW
 
 
-view : Model -> Html Msg
-view model =
-    body []
-        [ h1 [] [ text config.title ]
-        , h2 [] [ text "My Heroes" ]
-        , ul [ class "items" ]
-            (List.map
-                (\e ->
-                    li
-                        [ onClick (Select e)
-                        , if isHeroSelected model.selectedHeroId e then
-                            (class "selected")
-                          else
-                            class ""
-                        ]
-                        [ span [ class "badge" ] [ text (toString e.id) ], text e.name ]
-                )
-                model.heroes
-            )
-        , (if model.selectedHeroId /= Nothing then
+showDetail : Model -> Html Msg
+showDetail model =
+    case model.selectedHeroId of
+        Nothing ->
+            text ""
+
+        Just i ->
             div []
                 [ h2 []
-                    [ text ((getHero model.selectedHeroId model.heroes).name ++ " details!")
+                    [ text ((getHero i model.heroes).name ++ " details!")
                     ]
                 , div []
-                    [ label [] [ text ("id: " ++ toString (withDefault -1 model.selectedHeroId)) ]
+                    [ label [] [ text ("id: " ++ toString i) ]
                     ]
                 , div []
                     [ label [] [ text "name: " ]
                     , input
-                        [ value (getHero model.selectedHeroId model.heroes).name
+                        [ value (getHero i model.heroes).name
                         , placeholder "name"
                         , onInput Change
                         ]
                         []
                     ]
                 ]
-           else
-            text ""
-          )
+
+
+showList : Model -> List (Html Msg)
+showList model =
+    List.map
+        (\e ->
+            li
+                [ onClick (Select e)
+                , if isHeroSelected model.selectedHeroId e then
+                    (class "selected")
+                  else
+                    class ""
+                ]
+                [ span [ class "badge" ] [ text (toString e.id) ], text e.name ]
+        )
+        model.heroes
+
+
+view : Model -> Html Msg
+view model =
+    body []
+        [ h1 [] [ text config.title ]
+        , h2 [] [ text "My Heroes" ]
+        , ul [ class "items" ] (showList model)
+        , showDetail model
         ]
