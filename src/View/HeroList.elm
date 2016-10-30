@@ -6,7 +6,6 @@ import Html.Events exposing (onInput, onClick)
 import Messages exposing (Msg(..))
 import Model exposing (Model)
 import Utils exposing (getHero, isHeroSelected)
-import AppConfig exposing (config)
 
 
 showDetail : Model -> Html Msg
@@ -53,9 +52,8 @@ showList model =
 
 view : Model -> Html Msg
 view model =
-    body []
-        [ h1 [] [ text config.title ]
-        , h2 [] [ text "My Heroes" ]
+    div []
+        [ h2 [] [ text "My Heroes" ]
         , ul [ class "items" ] (showList model)
         , showDetail model
         ]

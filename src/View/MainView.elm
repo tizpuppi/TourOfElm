@@ -1,12 +1,15 @@
 module View.MainView exposing (..)
 
-import Html exposing (Html, Attribute, body, h1, nav, a, text)
+import Html exposing (Html, Attribute, body, div, h1, nav, a, text)
 import Html.Attributes exposing (href)
 import Html.Events exposing (onWithOptions)
 import Json.Decode as Json
 import AppConfig exposing (config)
 import Model exposing (..)
 import Messages exposing (Msg(..))
+import Routing
+import View.HeroList
+import View.Dashboard
 
 
 view : Model -> Html Msg
@@ -17,7 +20,7 @@ view model =
             [ a (linkAttr ShowDashboard "/dashboard") [ text "Dashboard" ]
             , a (linkAttr ShowHeroes "/heroes") [ text "Heroes" ]
             ]
-        , text (toString model.route)
+        , page model
         ]
 
 
@@ -35,3 +38,16 @@ onClick msg =
             { stopPropagation = True, preventDefault = True }
     in
         onWithOptions "click" noBubble (Json.succeed msg)
+
+
+page : Model -> Html Msg
+page model =
+    case model.route of
+        Routing.ListRoute ->
+            View.HeroList.view model
+
+        Routing.DashboardRoute ->
+            View.Dashboard.view model
+
+        Routing.NotFoundRoute ->
+            div [] [ text "Not Found" ]
