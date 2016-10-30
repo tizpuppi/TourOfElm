@@ -8,7 +8,8 @@
     "build": "gulp clean && gulp build",
     "reactor": "elm reactor",
     "format": "elm format --yes src",
-    "clean": "gulp clean"
+    "clean": "gulp clean",
+    "json-server": "json-server --watch server/db.json"
   },
   "repository": {
     "type": "git",
@@ -30,5 +31,8 @@
     "gulp-elm": "^0.5.0",
     "gulp-uglify": "^2.0.0",
     "gulp-webserver": "^0.9.1"
+  },
+  "dependencies": {
+    "json-server": "^0.8.22"
   }
 }
