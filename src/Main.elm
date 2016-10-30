@@ -8,7 +8,7 @@ import Html.App as App
 
 main : Program Never
 main =
-    App.beginnerProgram { model = initialModel, view = view, update = update }
+    App.program { init = init, view = view, update = update, subscriptions = subscriptions }
 
 
 type alias AppConfig =
@@ -52,6 +52,11 @@ initialModel =
     { selectedHeroId = Nothing, heroes = heroes }
 
 
+init : ( Model, Cmd Msg )
+init =
+    initialModel ! [ Cmd.none ]
+
+
 
 -- UPDATE
 
@@ -61,13 +66,14 @@ type Msg
     | Select Hero
 
 
-update : Msg -> Model -> Model
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Change newName ->
             case model.selectedHeroId of
                 Nothing ->
                     model
+                        ! [ Cmd.none ]
 
                 Just i ->
                     let
@@ -75,9 +81,11 @@ update msg model =
                             getHero i model.heroes
                     in
                         { model | heroes = (replaceHero i (Hero h.id newName) model.heroes) }
+                            ! [ Cmd.none ]
 
         Select hero ->
             { model | selectedHeroId = Just hero.id }
+                ! [ Cmd.none ]
 
 
 
@@ -177,3 +185,12 @@ view model =
         , ul [ class "items" ] (showList model)
         , showDetail model
         ]
+
+
+
+--SUBSCRIPTIONS
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Sub.none
