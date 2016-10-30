@@ -1,15 +1,22 @@
 module Main exposing (main)
 
-import Html.App as App
 import Model exposing (Model)
 import Messages exposing (Msg)
-import MainView exposing (view)
-import Update exposing (init, update)
+import View.MainView exposing (view)
+import Update exposing (init, update, urlUpdate)
+import Navigation
+import Routing
 
 
 main : Program Never
 main =
-    App.program { init = init, view = view, update = update, subscriptions = subscriptions }
+    Navigation.program Routing.parser
+        { init = init
+        , view = view
+        , update = update
+        , urlUpdate = urlUpdate
+        , subscriptions = subscriptions
+        }
 
 
 

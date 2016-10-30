@@ -1,6 +1,7 @@
 module Utils exposing (replaceHero, getHero, isHeroSelected)
 
-import Model exposing (Model, Hero)
+import Model exposing (Model)
+import Hero exposing (Hero)
 
 
 replaceHero : Int -> Hero -> List Hero -> List Hero

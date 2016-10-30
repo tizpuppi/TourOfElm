@@ -1,16 +1,27 @@
-module Update exposing (init, update)
+module Update exposing (init, update, urlUpdate)
 
 import Json.Decode as Json exposing ((:=))
 import Task
 import Http
 import Messages exposing (Msg(..))
-import Model exposing (Model, Hero, initialModel)
+import Model exposing (Model, initialModel)
+import Hero exposing (Hero)
 import Utils exposing (getHero, replaceHero)
+import Routing
+import Navigation
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        ShowDashboard ->
+            { model | route = Routing.DashboardRoute }
+                ! [ Navigation.newUrl "/dashboard" ]
+
+        ShowHeroes ->
+            { model | route = Routing.ListRoute }
+                ! [ Navigation.newUrl "/heroes" ]
+
         Change newName ->
             case model.selectedHeroId of
                 Nothing ->
@@ -38,6 +49,11 @@ update msg model =
                 ! [ Cmd.none ]
 
 
+urlUpdate : Routing.Route -> Model -> ( Model, Cmd Msg )
+urlUpdate currentRoute model =
+    { model | route = currentRoute } ! [ Cmd.none ]
+
+
 getHeroes : Cmd Msg
 getHeroes =
     let
@@ -58,6 +74,6 @@ decodeUrl =
         Json.list hero
 
 
-init : ( Model, Cmd Msg )
-init =
-    initialModel ! [ getHeroes ]
+init : Routing.Route -> ( Model, Cmd Msg )
+init currentRoute =
+    initialModel currentRoute ! [ getHeroes ]

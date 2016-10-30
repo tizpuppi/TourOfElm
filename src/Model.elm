@@ -1,14 +1,13 @@
-module Model exposing (Hero, Model, initialModel)
+module Model exposing (Model, initialModel)
 
-
-type alias Hero =
-    { id : Int, name : String }
+import Routing
+import Hero exposing (Hero, HeroId)
 
 
 type alias Model =
-    { selectedHeroId : Maybe Int, heroes : List Hero }
+    { selectedHeroId : Maybe Int, heroes : List Hero, route : Routing.Route }
 
 
-initialModel : Model
-initialModel =
-    { selectedHeroId = Nothing, heroes = [] }
+initialModel : Routing.Route -> Model
+initialModel route =
+    { selectedHeroId = Nothing, heroes = [], route = route }

@@ -1,11 +1,13 @@
 module Messages exposing (Msg(..))
 
 import Http
-import Model exposing (Hero)
+import Hero exposing (Hero)
 
 
 type Msg
-    = Change String
+    = ShowDashboard
+    | ShowHeroes
+    | Change String
     | Select Hero
     | FetchFail Http.Error
     | FetchSucceed (List Hero)

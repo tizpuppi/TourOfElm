@@ -1,4 +1,4 @@
-module MainView exposing (view)
+module View.HeroList exposing (view)
 
 import Html exposing (Html, body, div, span, h1, h2, ul, li, label, input, text)
 import Html.Attributes exposing (placeholder, value, class)
