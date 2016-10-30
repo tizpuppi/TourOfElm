@@ -4,6 +4,9 @@ import Html exposing (Html, body, div, span, h1, h2, ul, li, label, input, text)
 import Html.Attributes exposing (placeholder, value, class)
 import Html.Events exposing (onInput, onClick)
 import Html.App as App
+import Task
+import Http
+import Json.Decode as Json exposing ((:=))
 
 
 main : Program Never
@@ -28,33 +31,18 @@ type alias Hero =
     { id : Int, name : String }
 
 
-heroes : List Hero
-heroes =
-    [ Hero 11 "Mr. Nice"
-    , Hero 12 "Narco"
-    , Hero 13 "Bombasto"
-    , Hero 14 "Celeritas"
-    , Hero 15 "Magneta"
-    , Hero 16 "RubberMan"
-    , Hero 17 "Dynama"
-    , Hero 18 "Dr IQ"
-    , Hero 19 "Magma"
-    , Hero 20 "Tornado"
-    ]
-
-
 type alias Model =
     { selectedHeroId : Maybe Int, heroes : List Hero }
 
 
 initialModel : Model
 initialModel =
-    { selectedHeroId = Nothing, heroes = heroes }
+    { selectedHeroId = Nothing, heroes = [] }
 
 
 init : ( Model, Cmd Msg )
 init =
-    initialModel ! [ Cmd.none ]
+    initialModel ! [ getHeroes ]
 
 
 
@@ -64,6 +52,8 @@ init =
 type Msg
     = Change String
     | Select Hero
+    | FetchFail Http.Error
+    | FetchSucceed (List Hero)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -86,6 +76,34 @@ update msg model =
         Select hero ->
             { model | selectedHeroId = Just hero.id }
                 ! [ Cmd.none ]
+
+        FetchFail _ ->
+            model
+                ! [ Cmd.none ]
+
+        FetchSucceed heroes ->
+            { model | heroes = heroes }
+                ! [ Cmd.none ]
+
+
+getHeroes : Cmd Msg
+getHeroes =
+    let
+        url =
+            "http://localhost:3000/heroes"
+    in
+        Task.perform FetchFail FetchSucceed (Http.get decodeUrl url)
+
+
+decodeUrl : Json.Decoder (List Hero)
+decodeUrl =
+    let
+        hero =
+            Json.object2 (\id name -> Hero id name)
+                ("id" := Json.int)
+                ("name" := Json.string)
+    in
+        Json.list hero
 
 
 
