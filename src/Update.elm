@@ -1,10 +1,10 @@
-module Update exposing (update, getHeroes)
+module Update exposing (init, update)
 
 import Json.Decode as Json exposing ((:=))
 import Task
 import Http
 import Messages exposing (Msg(..))
-import Model exposing (Model, Hero)
+import Model exposing (Model, Hero, initialModel)
 import Utils exposing (getHero, replaceHero)
 
 
@@ -56,3 +56,8 @@ decodeUrl =
                 ("name" := Json.string)
     in
         Json.list hero
+
+
+init : ( Model, Cmd Msg )
+init =
+    initialModel ! [ getHeroes ]

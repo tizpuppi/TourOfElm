@@ -1,20 +1,15 @@
 module Main exposing (main)
 
 import Html.App as App
-import Model exposing (Model, initialModel)
+import Model exposing (Model)
 import Messages exposing (Msg)
 import MainView exposing (view)
-import Update exposing (update, getHeroes)
+import Update exposing (init, update)
 
 
 main : Program Never
 main =
     App.program { init = init, view = view, update = update, subscriptions = subscriptions }
-
-
-init : ( Model, Cmd Msg )
-init =
-    initialModel ! [ getHeroes ]
 
 
 
