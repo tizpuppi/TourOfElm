@@ -29,7 +29,7 @@ gulp.task('build:elm', ['build:init'], function(){
 });
 
 gulp.task('build:files', function(){
-  return gulp.src([paths.src + '/index.html', paths.src + '/styles.css', paths.src + '/favicon.ico'])
+  return gulp.src([paths.src + '/static/index.html', paths.src + '/static/styles.css', paths.src + '/static/favicon.ico'])
     .pipe(gulp.dest(paths.out + '/'))
 });
 
