@@ -10,6 +10,7 @@ import Messages exposing (Msg(..))
 import Routing
 import View.HeroList
 import View.Dashboard
+import View.Detail
 
 
 view : Model -> Html Msg
@@ -48,6 +49,9 @@ page model =
 
         Routing.DashboardRoute ->
             View.Dashboard.view model
+
+        Routing.DetailRoute heroid ->
+            View.Detail.view model heroid
 
         Routing.NotFoundRoute ->
             div [] [ text "Not Found" ]

@@ -15,12 +15,16 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         ShowDashboard ->
-            { model | route = Routing.DashboardRoute }
+            model
                 ! [ Navigation.newUrl "/dashboard" ]
 
         ShowHeroes ->
-            { model | route = Routing.ListRoute }
+            model
                 ! [ Navigation.newUrl "/heroes" ]
+
+        ShowDetail heroid ->
+            model
+                ! [ Navigation.newUrl ("/detail/" ++ toString heroid) ]
 
         Change newName ->
             case model.selectedHeroId of
@@ -51,7 +55,12 @@ update msg model =
 
 urlUpdate : Routing.Route -> Model -> ( Model, Cmd Msg )
 urlUpdate currentRoute model =
-    { model | route = currentRoute } ! [ Cmd.none ]
+    case currentRoute of
+        Routing.DetailRoute heroid ->
+            { model | selectedHeroId = Just heroid, route = currentRoute } ! [ Cmd.none ]
+
+        _ ->
+            { model | route = currentRoute } ! [ Cmd.none ]
 
 
 getHeroes : Cmd Msg
@@ -76,4 +85,9 @@ decodeUrl =
 
 init : Routing.Route -> ( Model, Cmd Msg )
 init currentRoute =
-    initialModel currentRoute ! [ getHeroes ]
+    case currentRoute of
+        Routing.DetailRoute heroid ->
+            initialModel currentRoute (Just heroid) ! [ getHeroes ]
+
+        _ ->
+            initialModel currentRoute Nothing ! [ getHeroes ]

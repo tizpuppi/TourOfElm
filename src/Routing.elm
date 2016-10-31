@@ -2,12 +2,14 @@ module Routing exposing (..)
 
 import String
 import Navigation
-import UrlParser exposing (Parser, oneOf, format, s)
+import UrlParser exposing (Parser, oneOf, format, s, (</>), int)
+import Hero exposing (HeroId)
 
 
 type Route
     = ListRoute
     | DashboardRoute
+    | DetailRoute HeroId
     | NotFoundRoute
 
 
@@ -17,6 +19,7 @@ matchers =
         [ format DashboardRoute (s "")
         , format DashboardRoute (s "dashboard")
         , format ListRoute (s "heroes")
+        , format DetailRoute (s "detail" </> int)
         ]
 
 

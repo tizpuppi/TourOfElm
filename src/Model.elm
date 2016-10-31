@@ -8,6 +8,6 @@ type alias Model =
     { selectedHeroId : Maybe Int, heroes : List Hero, route : Routing.Route }
 
 
-initialModel : Routing.Route -> Model
-initialModel route =
-    { selectedHeroId = Nothing, heroes = [], route = route }
+initialModel : Routing.Route -> Maybe HeroId -> Model
+initialModel route heroid =
+    { selectedHeroId = heroid, heroes = [], route = route }
