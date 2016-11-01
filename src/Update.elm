@@ -44,6 +44,13 @@ update msg model =
             { model | selectedHeroId = Just hero.id }
                 ! [ Cmd.none ]
 
+        GotoDetail hero ->
+            { model | selectedHeroId = Just hero.id }
+                ! [ Task.perform identity identity (Task.succeed (ShowDetail hero.id)) ]
+
+        GoBack ->
+            model ! [ Navigation.back 1 ]
+
         FetchFail _ ->
             model
                 ! [ Cmd.none ]

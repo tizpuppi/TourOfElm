@@ -6,7 +6,7 @@ import Messages exposing (Msg(..))
 import Utils exposing (getHero)
 import Html exposing (Html, div, h2, label, input, button, text)
 import Html.Attributes exposing (value, placeholder)
-import Html.Events exposing (onInput)
+import Html.Events exposing (onInput, onClick)
 
 
 view : Model -> HeroId -> Html Msg
@@ -35,6 +35,6 @@ view model heroid =
                         ]
                         []
                     ]
-                , button []
+                , button [ onClick (GoBack) ]
                     [ text "Back" ]
                 ]

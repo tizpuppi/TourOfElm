@@ -1,6 +1,6 @@
 module View.HeroList exposing (view)
 
-import Html exposing (Html, body, div, span, h1, h2, ul, li, label, input, text)
+import Html exposing (Html, body, div, span, h1, h2, ul, li, label, input, button, text)
 import Html.Attributes exposing (placeholder, value, class)
 import Html.Events exposing (onInput, onClick)
 import Messages exposing (Msg(..))
@@ -17,20 +17,10 @@ showDetail model =
         Just i ->
             div []
                 [ h2 []
-                    [ text ((getHero i model.heroes).name ++ " details!")
+                    [ text ((getHero i model.heroes).name ++ " is my hero")
                     ]
-                , div []
-                    [ label [] [ text ("id: " ++ toString i) ]
-                    ]
-                , div []
-                    [ label [] [ text "name: " ]
-                    , input
-                        [ value (getHero i model.heroes).name
-                        , placeholder "name"
-                        , onInput Change
-                        ]
-                        []
-                    ]
+                , button [ onClick (GotoDetail (getHero i model.heroes)) ]
+                    [ text "View Details" ]
                 ]
 
 

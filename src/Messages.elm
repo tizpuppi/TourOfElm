@@ -10,5 +10,7 @@ type Msg
     | ShowDetail HeroId
     | Change String
     | Select Hero
+    | GotoDetail Hero
+    | GoBack
     | FetchFail Http.Error
     | FetchSucceed (List Hero)
