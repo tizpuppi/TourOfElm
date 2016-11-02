@@ -18,18 +18,18 @@ view model heroid =
                     [ text ("Hero " ++ (toString heroid) ++ " is missing!") ]
                 ]
 
-        Just heroid ->
+        Just id ->
             div []
                 [ h2 []
-                    [ text ((getHero heroid model.heroes).name ++ " details!")
+                    [ text ((getHero id model.heroes).name ++ " details!")
                     ]
                 , div []
-                    [ label [] [ text ("id: " ++ toString heroid) ]
+                    [ label [] [ text ("id: " ++ toString id) ]
                     ]
                 , div []
                     [ label [] [ text "name: " ]
                     , input
-                        [ value (getHero heroid model.heroes).name
+                        [ value (getHero id model.heroes).name
                         , placeholder "name"
                         , onInput Change
                         ]

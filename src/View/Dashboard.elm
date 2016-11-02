@@ -15,7 +15,7 @@ view model =
             [ text "Top Heroes" ]
         , div
             [ class "grid grid-pad" ]
-            (viewHeroList (List.take 4 model.heroes))
+            (viewHeroList <| List.take 4 <| Maybe.withDefault [] <| List.tail model.heroes)
         ]
 
 
