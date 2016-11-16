@@ -1,6 +1,6 @@
 module Update exposing (init, update)
 
-import Json.Decode as Json exposing ((:=))
+import Json.Decode as Json exposing (map2, field, int, string)
 import Task
 import Http
 import Messages exposing (Msg(..))
@@ -29,11 +29,11 @@ update msg model =
             { model | selectedHeroId = Just hero.id }
                 ! [ Cmd.none ]
 
-        FetchFail _ ->
+        LoadHeroes (Err _) ->
             model
                 ! [ Cmd.none ]
 
-        FetchSucceed heroes ->
+        LoadHeroes (Ok heroes) ->
             { model | heroes = heroes }
                 ! [ Cmd.none ]
 
@@ -43,19 +43,20 @@ getHeroes =
     let
         url =
             "http://localhost:3000/heroes"
+
+        request =
+            Http.get url decodeUrl
     in
-        Task.perform FetchFail FetchSucceed (Http.get decodeUrl url)
+        Http.send LoadHeroes request
 
 
 decodeUrl : Json.Decoder (List Hero)
 decodeUrl =
     let
-        hero =
-            Json.object2 (\id name -> Hero id name)
-                ("id" := Json.int)
-                ("name" := Json.string)
+        heroDecoder =
+            map2 Hero (field "id" int) (field "name" string)
     in
-        Json.list hero
+        Json.list heroDecoder
 
 
 init : ( Model, Cmd Msg )

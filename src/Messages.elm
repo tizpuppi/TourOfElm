@@ -7,5 +7,4 @@ import Model exposing (Hero)
 type Msg
     = Change String
     | Select Hero
-    | FetchFail Http.Error
-    | FetchSucceed (List Hero)
+    | LoadHeroes (Result Http.Error (List Hero))
