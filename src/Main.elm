@@ -3,12 +3,11 @@ module Main exposing (..)
 import Html exposing (Html, div, h1, h2, label, input, text)
 import Html.Attributes exposing (placeholder, value)
 import Html.Events exposing (onInput)
-import Html.App as App
 
 
-main : Program Never
+main : Program Never Model Msg
 main =
-    App.beginnerProgram { model = model, view = view, update = update }
+    Html.beginnerProgram { model = model, view = view, update = update }
 
 
 type alias AppConfig =
