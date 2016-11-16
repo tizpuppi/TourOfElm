@@ -1,20 +1,18 @@
 module Main exposing (main)
 
 import Model exposing (Model)
-import Messages exposing (Msg)
+import Messages exposing (Msg(UrlChange))
 import View.MainView exposing (view)
-import Update exposing (init, update, urlUpdate)
+import Update exposing (init, update)
 import Navigation
-import Routing
 
 
-main : Program Never
+main : Program Never Model Msg
 main =
-    Navigation.program Routing.parser
+    Navigation.program UrlChange
         { init = init
-        , view = view
         , update = update
-        , urlUpdate = urlUpdate
+        , view = view
         , subscriptions = subscriptions
         }
 

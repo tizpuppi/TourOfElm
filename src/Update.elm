@@ -1,7 +1,7 @@
-module Update exposing (init, update, urlUpdate)
+module Update exposing (init, update)
 
-import Json.Decode as Json exposing ((:=))
 import Task
+import Json.Decode as Json exposing (map2, field, int, string)
 import Http
 import Messages exposing (Msg(..))
 import Model exposing (Model, initialModel)
@@ -46,28 +46,30 @@ update msg model =
 
         GotoDetail hero ->
             { model | selectedHeroId = Just hero.id }
-                ! [ Task.perform identity identity (Task.succeed (ShowDetail hero.id)) ]
+                ! [ Task.perform ShowDetail (Task.succeed hero.id) ]
 
         GoBack ->
             model ! [ Navigation.back 1 ]
 
-        FetchFail _ ->
+        LoadHeroes (Err _) ->
             model
                 ! [ Cmd.none ]
 
-        FetchSucceed heroes ->
+        LoadHeroes (Ok heroes) ->
             { model | heroes = heroes }
                 ! [ Cmd.none ]
 
+        UrlChange location ->
+            let
+                currentRoute =
+                    Routing.parse location
+            in
+                case currentRoute of
+                    Routing.DetailRoute heroid ->
+                        { model | selectedHeroId = Just heroid, route = currentRoute } ! [ Cmd.none ]
 
-urlUpdate : Routing.Route -> Model -> ( Model, Cmd Msg )
-urlUpdate currentRoute model =
-    case currentRoute of
-        Routing.DetailRoute heroid ->
-            { model | selectedHeroId = Just heroid, route = currentRoute } ! [ Cmd.none ]
-
-        _ ->
-            { model | route = currentRoute } ! [ Cmd.none ]
+                    _ ->
+                        { model | route = currentRoute } ! [ Cmd.none ]
 
 
 getHeroes : Cmd Msg
@@ -75,26 +77,31 @@ getHeroes =
     let
         url =
             "http://localhost:3000/heroes"
+
+        request =
+            Http.get url decodeUrl
     in
-        Task.perform FetchFail FetchSucceed (Http.get decodeUrl url)
+        Http.send LoadHeroes request
 
 
 decodeUrl : Json.Decoder (List Hero)
 decodeUrl =
     let
-        hero =
-            Json.object2 (\id name -> Hero id name)
-                ("id" := Json.int)
-                ("name" := Json.string)
+        heroDecoder =
+            map2 Hero (field "id" int) (field "name" string)
     in
-        Json.list hero
+        Json.list heroDecoder
 
 
-init : Routing.Route -> ( Model, Cmd Msg )
-init currentRoute =
-    case currentRoute of
-        Routing.DetailRoute heroid ->
-            initialModel currentRoute (Just heroid) ! [ getHeroes ]
+init : Navigation.Location -> ( Model, Cmd Msg )
+init location =
+    let
+        currentRoute =
+            Routing.parse location
+    in
+        case currentRoute of
+            Routing.DetailRoute heroid ->
+                initialModel currentRoute (Just heroid) ! [ getHeroes ]
 
-        _ ->
-            initialModel currentRoute Nothing ! [ getHeroes ]
+            _ ->
+                initialModel currentRoute Nothing ! [ getHeroes ]
