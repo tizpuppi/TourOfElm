@@ -3,15 +3,13 @@ module Main exposing (..)
 import Html exposing (Html, body, div, span, h1, h2, ul, li, label, input, text)
 import Html.Attributes exposing (placeholder, value, class)
 import Html.Events exposing (onInput, onClick)
-import Html.App as App
-import Task
 import Http
-import Json.Decode as Json exposing ((:=))
+import Json.Decode as Json exposing (map2, field, int, string)
 
 
-main : Program Never
+main : Program Never Model Msg
 main =
-    App.program { init = init, view = view, update = update, subscriptions = subscriptions }
+    Html.program { init = init, view = view, update = update, subscriptions = subscriptions }
 
 
 type alias AppConfig =
@@ -52,8 +50,7 @@ init =
 type Msg
     = Change String
     | Select Hero
-    | FetchFail Http.Error
-    | FetchSucceed (List Hero)
+    | LoadHeroes (Result Http.Error (List Hero))
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -77,11 +74,11 @@ update msg model =
             { model | selectedHeroId = Just hero.id }
                 ! [ Cmd.none ]
 
-        FetchFail _ ->
+        LoadHeroes (Err _) ->
             model
                 ! [ Cmd.none ]
 
-        FetchSucceed heroes ->
+        LoadHeroes (Ok heroes) ->
             { model | heroes = heroes }
                 ! [ Cmd.none ]
 
@@ -91,19 +88,20 @@ getHeroes =
     let
         url =
             "http://localhost:3000/heroes"
+
+        request =
+            Http.get url decodeUrl
     in
-        Task.perform FetchFail FetchSucceed (Http.get decodeUrl url)
+        Http.send LoadHeroes request
 
 
 decodeUrl : Json.Decoder (List Hero)
 decodeUrl =
     let
-        hero =
-            Json.object2 (\id name -> Hero id name)
-                ("id" := Json.int)
-                ("name" := Json.string)
+        heroDecoder =
+            map2 Hero (field "id" int) (field "name" string)
     in
-        Json.list hero
+        Json.list heroDecoder
 
 
 
