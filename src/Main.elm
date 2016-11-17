@@ -50,7 +50,7 @@ init =
 type Msg
     = Change String
     | Select Hero
-    | LoadHeroes (Result Http.Error (List Hero))
+    | FetchedHeroes (Result Http.Error (List Hero))
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -74,11 +74,11 @@ update msg model =
             { model | selectedHeroId = Just hero.id }
                 ! [ Cmd.none ]
 
-        LoadHeroes (Err _) ->
+        FetchedHeroes (Err _) ->
             model
                 ! [ Cmd.none ]
 
-        LoadHeroes (Ok heroes) ->
+        FetchedHeroes (Ok heroes) ->
             { model | heroes = heroes }
                 ! [ Cmd.none ]
 
@@ -92,7 +92,7 @@ getHeroes =
         request =
             Http.get url decodeUrl
     in
-        Http.send LoadHeroes request
+        Http.send FetchedHeroes request
 
 
 decodeUrl : Json.Decoder (List Hero)
