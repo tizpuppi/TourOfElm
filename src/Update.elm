@@ -1,7 +1,7 @@
 module Update exposing (init, update)
 
 import Task
-import Json.Decode as Json exposing (map2, field, int, string)
+import Json.Decode as Json
 import Http
 import Messages exposing (Msg(..))
 import Model exposing (Model, initialModel)
@@ -88,7 +88,7 @@ decodeHeroes : Json.Decoder (List Hero)
 decodeHeroes =
     let
         heroDecoder =
-            map2 Hero (field "id" int) (field "name" string)
+            Json.map2 Hero (Json.field "id" Json.int) (Json.field "name" Json.string)
     in
         Json.list heroDecoder
 
