@@ -2,6 +2,7 @@ module Messages exposing (Msg(..))
 
 import Http
 import Hero exposing (Hero, HeroId)
+import Navigation
 
 
 type Msg
@@ -12,5 +13,5 @@ type Msg
     | Select Hero
     | GotoDetail Hero
     | GoBack
-    | FetchFail Http.Error
-    | FetchSucceed (List Hero)
+    | LoadHeroes (Result Http.Error (List Hero))
+    | UrlChange Navigation.Location

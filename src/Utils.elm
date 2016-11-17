@@ -1,6 +1,5 @@
 module Utils exposing (replaceHero, getHero, isHeroSelected)
 
-import Model exposing (Model)
 import Hero exposing (Hero)
 
 
