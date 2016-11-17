@@ -51,11 +51,11 @@ update msg model =
         GoBack ->
             model ! [ Navigation.back 1 ]
 
-        LoadHeroes (Err _) ->
+        FetchedHeroes (Err _) ->
             model
                 ! [ Cmd.none ]
 
-        LoadHeroes (Ok heroes) ->
+        FetchedHeroes (Ok heroes) ->
             { model | heroes = heroes }
                 ! [ Cmd.none ]
 
@@ -79,13 +79,13 @@ getHeroes =
             "http://localhost:3000/heroes"
 
         request =
-            Http.get url decodeUrl
+            Http.get url decodeHeroes
     in
-        Http.send LoadHeroes request
+        Http.send FetchedHeroes request
 
 
-decodeUrl : Json.Decoder (List Hero)
-decodeUrl =
+decodeHeroes : Json.Decoder (List Hero)
+decodeHeroes =
     let
         heroDecoder =
             map2 Hero (field "id" int) (field "name" string)

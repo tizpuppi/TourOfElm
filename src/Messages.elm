@@ -13,5 +13,5 @@ type Msg
     | Select Hero
     | GotoDetail Hero
     | GoBack
-    | LoadHeroes (Result Http.Error (List Hero))
+    | FetchedHeroes (Result Http.Error (List Hero))
     | UrlChange Navigation.Location
