@@ -4,7 +4,7 @@ import Html exposing (Html, body, div, span, h1, h2, ul, li, label, input, text)
 import Html.Attributes exposing (placeholder, value, class)
 import Html.Events exposing (onInput, onClick)
 import Http
-import Json.Decode as Json exposing (map2, field, int, string)
+import Json.Decode as Json
 
 
 main : Program Never Model Msg
@@ -99,7 +99,7 @@ decodeUrl : Json.Decoder (List Hero)
 decodeUrl =
     let
         heroDecoder =
-            map2 Hero (field "id" int) (field "name" string)
+            Json.map2 Hero (Json.field "id" Json.int) (Json.field "name" Json.string)
     in
         Json.list heroDecoder
 
